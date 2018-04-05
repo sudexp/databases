@@ -8,18 +8,25 @@ $db_handle= new DBController();
 if(!empty($_GET["action"])) {
 switch($_GET["action"]) {
 	case "add":
-		if(!empty($_POST["TuoteRyhmaID"])) {
-			$productByCode = $db_handle->runQuery("SELECT * FROM TUOTTEET WHERE TuoteID='" . $_GET["TuoteID"] . "'");
-			$itemArray = array($productByCode[0]["TuoteID"]=>array('tuotteenNimi'=>$productByCode[0]["tuotteenNimi"], 'TuoteID'=>$productByCode[0]["TuoteID"], 'TuoteRyhmaID'=>$_POST["TuoteRyhmaID"], 'hinta'=>$productByCode[0]["hinta"]));
+		if(!empty($_POST["maara"])) {
+			$productByCode = $db_handle->runQuery("SELECT * FROM TUOTTEET WHERE TuoteCode='" . $_GET["TuoteCode"] . "'");
+			$itemArray = array(
+			  $productByCode[0]["TuoteCode"] => array(
+			    'tuotteenNimi' => $productByCode[0]["tuotteenNimi"],
+			    'TuoteCode' => $productByCode[0]["TuoteCode"],
+			    'maara' => $_POST["maara"],
+			    'hinta' => $productByCode[0]["hinta"]
+        )
+      );
 			
 			if(!empty($_SESSION["cart_item"])) {
-				if(in_array($productByCode[0]["TuoteID"],array_keys($_SESSION["cart_item"]))) {
+				if(in_array($productByCode[0]["TuoteCode"],array_keys($_SESSION["cart_item"]))) {
 					foreach($_SESSION["cart_item"] as $k => $v) {
-                            if($productByCode[0]["TuoteID"] == $k) {
-								if(empty($_SESSION["cart_item"][$k]["TuoteRyhmaID"])) {
-									$_SESSION["cart_item"][$k]["TuoteRyhmaID"] = 0;
+                            if($productByCode[0]["TuoteCode"] == $k) {
+								if(empty($_SESSION["cart_item"][$k]["maara"])) {
+									$_SESSION["cart_item"][$k]["maara"] = 0;
 								}
-								$_SESSION["cart_item"][$k]["TuoteRyhmaID"] += $_POST["TuoteRyhmaID"];
+								$_SESSION["cart_item"][$k]["maara"] += $_POST["maara"];
 							}
 					}
 				} else {
@@ -33,7 +40,7 @@ switch($_GET["action"]) {
 	case "remove":
 		if(!empty($_SESSION["cart_item"])) {
 			foreach($_SESSION["cart_item"] as $k => $v) {
-					if($_GET["TuoteID"] == $k)
+					if($_GET["TuoteCode"] == $k)
 						unset($_SESSION["cart_item"][$k]);				
 					if(empty($_SESSION["cart_item"]))
 						unset($_SESSION["cart_item"]);
@@ -63,8 +70,8 @@ if(isset($_SESSION["cart_item"])){
 <tbody>
 <tr>
 <th style="text-align:left;"><strong>Tuotteen nimi</strong></th>
-<th style="text-align:left;"><strong>TuoteID</strong></th>
-<th style="text-align:right;"><strong>TuoteRyhmaID</strong></th>
+<th style="text-align:left;"><strong>TuoteCode</strong></th>
+<th style="text-align:right;"><strong>Maara</strong></th>
 <th style="text-align:right;"><strong>Hinta</strong></th>
 <th style="text-align:center;"><strong>Action</strong></th>
 </tr>	
@@ -73,13 +80,13 @@ if(isset($_SESSION["cart_item"])){
 		?>
 				<tr>
 				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><strong><?php echo $item["tuotteenNimi"]; ?></strong></td>
-				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><?php echo $item["TuoteID"]; ?></td>
-				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo $item["TuoteRyhmaID"]; ?></td>
+				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><?php echo $item["TuoteCode"]; ?></td>
+				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo $item["maara"]; ?></td>
 				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo "$".$item["hinta"]; ?></td>
-				<td style="text-align:center;border-bottom:#F0F0F0 1px solid;"><a href="index.php?action=remove&TuoteID=<?php echo $item["TuoteID"]; ?>" class="btnRemoveAction">Remove Item</a></td>
+				<td style="text-align:center;border-bottom:#F0F0F0 1px solid;"><a href="index.php?action=remove&TuoteCode=<?php echo $item["TuoteCode"]; ?>" class="btnRemoveAction">Remove Item</a></td>
 				</tr>
 				<?php
-        $item_total += ($item["hinta"]*$item["TuoteRyhmaID"]);
+        $item_total += ($item["hinta"]*$item["maara"]);
 		}
 		?>
 
@@ -98,18 +105,19 @@ if(isset($_SESSION["cart_item"])){
 	<?php
     // here was an extra variable before "SELECT * FROM TUOTTEET"
 	$product_array = $db_handle->runQuery("SELECT * FROM TUOTTEET") or die("Tuotetietoja ei voitu noutaa");
-	if (!empty($product_array)) { 
+	if (!empty($product_array)) {
         foreach($product_array as $key=>$value){
 
 	?>
 		<div class="product-item">
             <!-- here was name of array instead of $value-->
-			<form method="post" action="index.php?action=add&TuoteID=<?php echo $value["TuoteID"]; ?>">
+			<form method="post" action="index.php?action=add&TuoteCode=<?php echo $value["TuoteCode"]; ?>">
 			<div><strong><?php echo $value["tuotteenNimi"]; ?></strong></div>
 			<div class="product-price">$<?php echo $value["hinta"]; ?></div>
-			<div><input type="text" name="TuoteRyhmaID" value="1" size="2" /><input type="submit" value="Add to cart" class="btnAddAction" /></div>
+			<div><input type="text" name="maara" value="1" size="2" /><input type="submit" value="Add to cart" class="btnAddAction" /></div>
 			</form>
 		</div>
+
 	<?php
 			}
 	}
