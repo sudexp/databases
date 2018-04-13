@@ -1,62 +1,58 @@
 <?php
-session_start();
-include "connect.php";
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-$db_handle= new DBController();
-if(!empty($_GET["action"])) {
-switch($_GET["action"]) {
-	case "add":
-		if(!empty($_POST["maara"])) {
-			$productByCode = $db_handle->runQuery("SELECT * FROM TUOTTEET WHERE TuoteCode='" . $_GET["TuoteCode"] . "'");
-			$itemArray = array(
-			  $productByCode[0]["TuoteCode"] => array(
-			    'tuotteenNimi' => $productByCode[0]["tuotteenNimi"],
-			    'TuoteCode' => $productByCode[0]["TuoteCode"],
-			    'maara' => $_POST["maara"],
-			    'hinta' => $productByCode[0]["hinta"]
-        )
-      );
-			
-			if(!empty($_SESSION["cart_item"])) {
-				if(in_array($productByCode[0]["TuoteCode"],array_keys($_SESSION["cart_item"]))) {
-					foreach($_SESSION["cart_item"] as $k => $v) {
-                            if($productByCode[0]["TuoteCode"] == $k) {
+	session_start();
+	include "connect.php";
+	ini_set('display_errors', 1);
+	error_reporting(E_ALL);
+	$db_handle= new DBController();
+	if(!empty($_GET["action"])) {
+		switch($_GET["action"]) {
+			case "add":
+				if(!empty($_POST["maara"])) {
+					$productByCode = $db_handle->runQuery("SELECT * FROM TUOTTEET WHERE TuoteCode='" . $_GET["TuoteCode"] . "'");
+					$itemArray = array(
+					$productByCode[0]["TuoteCode"] => array(
+						'tuotteenNimi' => $productByCode[0]["tuotteenNimi"],
+						'TuoteCode' => $productByCode[0]["TuoteCode"],
+						'maara' => $_POST["maara"],
+						'hinta' => $productByCode[0]["hinta"]
+					)
+				);
+				if(!empty($_SESSION["cart_item"])) {
+					if(in_array($productByCode[0]["TuoteCode"],array_keys($_SESSION["cart_item"]))) {
+						foreach($_SESSION["cart_item"] as $k => $v) {
+							if($productByCode[0]["TuoteCode"] == $k) {
 								if(empty($_SESSION["cart_item"][$k]["maara"])) {
 									$_SESSION["cart_item"][$k]["maara"] = 0;
 								}
 								$_SESSION["cart_item"][$k]["maara"] += $_POST["maara"];
 							}
+						}
+					} else {
+						$_SESSION["cart_item"] = array_merge($_SESSION["cart_item"],$itemArray);
 					}
 				} else {
-					$_SESSION["cart_item"] = array_merge($_SESSION["cart_item"],$itemArray);
+					$_SESSION["cart_item"] = $itemArray;
 				}
-			} else {
-				$_SESSION["cart_item"] = $itemArray;
 			}
+			break;
+			case "remove":
+				if(!empty($_SESSION["cart_item"])) {
+					foreach($_SESSION["cart_item"] as $k => $v) {
+						if($_GET["TuoteCode"] == $k) unset($_SESSION["cart_item"][$k]);				
+						if(empty($_SESSION["cart_item"]))unset($_SESSION["cart_item"]);
+					}
+				}
+			break;
+			case "empty":
+				unset($_SESSION["cart_item"]);
+			break;	
 		}
-	break;
-	case "remove":
-		if(!empty($_SESSION["cart_item"])) {
-			foreach($_SESSION["cart_item"] as $k => $v) {
-					if($_GET["TuoteCode"] == $k)
-						unset($_SESSION["cart_item"][$k]);				
-					if(empty($_SESSION["cart_item"]))
-						unset($_SESSION["cart_item"]);
-			}
-		}
-	break;
-	case "empty":
-		unset($_SESSION["cart_item"]);
-	break;	
-}
-}
+	}
 ?>
 
 <HTML>
 <HEAD>
-<TITLE>OSTOSKORISYSTEEMIMME JEEE</TITLE>
+<TITLE>Verkkokauppa</TITLE>
 <link href="style.css" type="text/css" rel="stylesheet" />
 </HEAD>
 <BODY>
