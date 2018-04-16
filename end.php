@@ -9,7 +9,7 @@
         $totalPrice = $totalPrice + $item["hinta"] * $item["maara"];
     } 
 ?>
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8" />
