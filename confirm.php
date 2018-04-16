@@ -31,16 +31,16 @@
             <dd><?php print( $_POST["clientID"]); ?></dd> -->
         </dl>
         <form action="user-form.php" method="post">
-            <input type="hidden" name="lastname" value="<?php print( $_POST["firestname"]); ?>"></input>
-            <input type="hidden" name="firstname" value="<?php print( $_POST["lastname"]); ?>"></input>
+            <input type="hidden" name="firstname" value="<?php print( $_POST["firstname"]); ?>"></input>
+            <input type="hidden" name="lastname" value="<?php print( $_POST["lastname"]); ?>"></input>
             <input type="hidden" name="phone" value="<?php print( $_POST["phone"]); ?>"></input>
             <input type="hidden" name="address" value="<?php print( $_POST["address"]); ?>"></input>
             <!-- <input type="hidden" name="clientID" value="<?php print( $_POST["clientID"]); ?>"></input> -->
             <button type="submit">Back</button>
         </form>
         <form action="end.php" method="post">
-            <input type="hidden" name="lastname" value="<?php print( $_POST["lastname"]); ?>"></input>
             <input type="hidden" name="firstname" value="<?php print( $_POST["firstname"]); ?>"></input>
+            <input type="hidden" name="lastname" value="<?php print( $_POST["lastname"]); ?>"></input>
             <input type="hidden" name="phone" value="<?php print( $_POST["phone"]); ?>"></input>
             <input type="hidden" name="address" value="<?php print( $_POST["address"]); ?>"></input>
             <!-- <input type="hidden" name="clientID" value="<?php print( $_POST["clientID"]); ?>"></input> -->
