@@ -1,35 +1,51 @@
 <?php
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
     include "connect.php";
 
     session_start();
     $items = $_SESSION["cart_item"];
-    // print("<pre>");
-    // print_r($items);
-    // print("</pre>");
-    $totalPrice = 0;  
+
+    //print("<pre>"); print_r($items); print("</pre>");
+
+    // Calculate total price:
+    $totalPrice = 0;
     foreach($items as $item) {
         $totalPrice = $totalPrice + $item["hinta"] * $item["maara"];
     }
 
-    // Add client and order info into DB:
+    // Add client and order info into DB.
+
+    // Connect to DB:
+    $db_handle= new DBController();
+    $connection = $db_handle->conn;
 
     // 1. Add client:
     $etunimi = $_POST["firstname"];
     $sukunimi = $_POST["lastname"];
     $osoite = $_POST["address"];
     $puhelinnumero = $_POST["phone"];
-    $query = "insert into ASIAKAS (etunimi, sukunimi, osoite, puhelinnumero, asiakasnumero) values ('$etunimi','$sukunimi','$osoite','$puhelinnumero','$asiakasnumero')";
-    mysqli_query($con, $query) or die ("henkilön lisääminen kantaan ei onnistunut");
+    $query = "insert into ASIAKAS (etunimi, sukunimi, osoite, puhelinnumero) values ('$etunimi','$sukunimi','$osoite','$puhelinnumero')";
+    // print("<p>SQL: '$query'</p>");
+    if (!mysqli_query($connection, $query)) {
+      // printf("Errormessage: %s\n", mysqli_error($connection));
+      exit();
+    }
 
     // 2. Get client id:
-    $clientId = mysqli_insert_id($con);
+    $clientId = mysqli_insert_id($db_handle->conn);
 
     // 3. Add order items:
     foreach($items as $item) {
       $productId = $item['TuoteID'];
+      $productGroupId = $item['TuoteRyhmaID'];
       $amount = $item['maara'];
-      $query = "insert into TILAUS (asiakasnumero, TuoteID, kpl) values ('$clientId', '$productId', $amount)";
-      mysqli_query($con, $query) or die("Cannot add order");
+      $query = "insert into TILAUS (asiakasnumero, TuoteID, kpl, ryhmaID) values ($clientId, '$productId', $amount, $productGroupId)";
+      // print("<p>SQL: '$query'</p>");
+      if (!mysqli_query($connection, $query)) {
+        // printf("Errormessage: %s\n", mysqli_error($connection));
+        exit();
+      }
     }
 ?>
 <!DOCTYPE html>

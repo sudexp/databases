@@ -22,7 +22,7 @@ class DBController {
 	private $password = "root";
 	// private $database = "L4062_3";
 	private $database = "tietokanta";
-	private $conn;
+	public $conn;
 
 	function __construct() {
 		$this->conn = $this->connectDB();

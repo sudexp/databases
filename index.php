@@ -17,6 +17,7 @@
 						$productCode => array(
 							'tuotteenNimi' => $productByCode[0]["tuotteenNimi"],
 							'TuoteID' => $productByCode[0]["TuoteID"],
+							'TuoteRyhmaID' => $productByCode[0]["TuoteRyhmaID"],
 							'maara' => $_POST["maara"],
 							'hinta' => $productByCode[0]["hinta"]
 						)

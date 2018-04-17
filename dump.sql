@@ -23,11 +23,11 @@ DROP TABLE IF EXISTS `ASIAKAS`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ASIAKAS` (
+  `asiakasnumero` int(11) NOT NULL AUTO_INCREMENT,
   `etunimi` varchar(30) NOT NULL,
   `sukunimi` varchar(45) NOT NULL,
   `osoite` varchar(45) NOT NULL,
   `puhelinnumero` int(11) DEFAULT NULL,
-  `asiakasnumero` varchar(45) NOT NULL,
   PRIMARY KEY (`asiakasnumero`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Kysytään asiakkaan tietoja tilausta varten';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -73,14 +73,14 @@ UNLOCK TABLES;
 -- Table structure for table `TILAUS`
 --
 
-DROP TABLE IF EXISTS `TILAUS`;
+DROP TABLE IF EXISTS `TILAUS`;  -- order
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `TILAUS` (
-  `tilauksenID` int(11) NOT NULL,
+  `tilauksenID` int(11) NOT NULL AUTO_INCREMENT,
   `istuntoID` varchar(45) DEFAULT NULL,
   `TuoteID` varchar(11) NOT NULL,
-  `asiakasnumero` varchar(45) NOT NULL,
+  `asiakasnumero` int(11) NOT NULL,
   `kpl` int(11) NOT NULL,
   `ryhmaID` varchar(45) NOT NULL,
   PRIMARY KEY (`tilauksenID`),
@@ -88,8 +88,8 @@ CREATE TABLE `TILAUS` (
   KEY `fk_ryhmaID_idx` (`ryhmaID`),
   KEY `fk_tuoteID_idx` (`TuoteID`),
   CONSTRAINT `fk_tuoteID` FOREIGN KEY (`TuoteID`) REFERENCES `TUOTTEET` (`TuoteID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_asiakasnumero` FOREIGN KEY (`asiakasnumero`) REFERENCES `ASIAKAS` (`asiakasnumero`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_ryhmaID` FOREIGN KEY (`ryhmaID`) REFERENCES `LAHETYS` (`ryhmaID`) ON DELETE NO ACTION ON UPDATE CASCADE
+  CONSTRAINT `fk_asiakasnumero` FOREIGN KEY (`asiakasnumero`) REFERENCES `ASIAKAS` (`asiakasnumero`) ON DELETE NO ACTION ON UPDATE CASCADE
+  -- , CONSTRAINT `fk_ryhmaID` FOREIGN KEY (`ryhmaID`) REFERENCES `LAHETYS` (`ryhmaID`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tilaukseen tarvittava välitaulukko';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
