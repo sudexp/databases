@@ -70,28 +70,6 @@ LOCK TABLES `LAHETYS` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `NIMI`
---
-
-DROP TABLE IF EXISTS `NIMI`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `NIMI` (
-  `TuoteID` int(11) NOT NULL,
-  PRIMARY KEY (`TuoteID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `NIMI`
---
-
-LOCK TABLES `NIMI` WRITE;
-/*!40000 ALTER TABLE `NIMI` DISABLE KEYS */;
-/*!40000 ALTER TABLE `NIMI` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `TILAUS`
 --
 
@@ -101,16 +79,16 @@ DROP TABLE IF EXISTS `TILAUS`;
 CREATE TABLE `TILAUS` (
   `tilauksenID` int(11) NOT NULL,
   `istuntoID` varchar(45) DEFAULT NULL,
-  `TuoteID` int(11) NOT NULL,
+  `TuoteID` varchar(11) NOT NULL,
   `asiakasnumero` varchar(45) NOT NULL,
   `kpl` int(11) NOT NULL,
   `ryhmaID` varchar(45) NOT NULL,
   PRIMARY KEY (`tilauksenID`),
   KEY `fk_asiakasnumero_idx` (`asiakasnumero`),
-  KEY `fk_TuoteID_idx` (`TuoteID`),
   KEY `fk_ryhmaID_idx` (`ryhmaID`),
+  KEY `fk_tuoteID_idx` (`TuoteID`),
+  CONSTRAINT `fk_tuoteID` FOREIGN KEY (`TuoteID`) REFERENCES `TUOTTEET` (`TuoteID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_asiakasnumero` FOREIGN KEY (`asiakasnumero`) REFERENCES `ASIAKAS` (`asiakasnumero`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_TuoteID` FOREIGN KEY (`TuoteID`) REFERENCES `TUOTTEET` (`TuoteID`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `fk_ryhmaID` FOREIGN KEY (`ryhmaID`) REFERENCES `LAHETYS` (`ryhmaID`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Tilaukseen tarvittava välitaulukko';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -132,7 +110,7 @@ DROP TABLE IF EXISTS `TUOTERYHMA`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `TUOTERYHMA` (
-  `TuoteRyhmaID` varchar(11) NOT NULL,
+  `TuoteRyhmaID` int(11) NOT NULL,
   `nimi` varchar(45) DEFAULT NULL,
   `kuvaus` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`TuoteRyhmaID`)
@@ -145,7 +123,7 @@ CREATE TABLE `TUOTERYHMA` (
 
 LOCK TABLES `TUOTERYHMA` WRITE;
 /*!40000 ALTER TABLE `TUOTERYHMA` DISABLE KEYS */;
-INSERT INTO `TUOTERYHMA` VALUES ('RYHMA1','Hevoset','Hevostarvikkeet'),('RYHMA2','Koirat','Koiratarvikkeet');
+INSERT INTO `TUOTERYHMA` VALUES (1,'Hevoset','Hevostarvikkeet'),(2,'Koirat','Koiratarvikkeet');
 /*!40000 ALTER TABLE `TUOTERYHMA` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -157,11 +135,10 @@ DROP TABLE IF EXISTS `TUOTTEET`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `TUOTTEET` (
-  `TuoteID` int(11) NOT NULL,
-  `TuoteCode` varchar(11) NOT NULL,
+  `TuoteID` varchar(11) NOT NULL,
   `tuotteenNimi` varchar(45) NOT NULL,
   `hinta` decimal(6,2) NOT NULL,
-  `TuoteRyhmaID` varchar(11) NOT NULL,
+  `TuoteRyhmaID` int(11) NOT NULL,
   `maara` int(11) NOT NULL,
   PRIMARY KEY (`TuoteID`),
   KEY `fk_TuoteRyhmaID_idx` (`TuoteRyhmaID`),
@@ -175,7 +152,7 @@ CREATE TABLE `TUOTTEET` (
 
 LOCK TABLES `TUOTTEET` WRITE;
 /*!40000 ALTER TABLE `TUOTTEET` DISABLE KEYS */;
-INSERT INTO `TUOTTEET` VALUES (100,'Toute100','Punainen loimi',100.00,'RYHMA1',0),(200,'Toute200','Sininen takki',78.00,'RYHMA2',0),(300,'Toute300','Ratsastusloimi',200.00,'RYHMA1',0),(400,'Toute400','Koiran tossut',50.00,'RYHMA2',0);
+INSERT INTO `TUOTTEET` VALUES ('100','Punainen loimi',100.00,1,0),('200','Sininen takki',78.00,2,0),('300','Ratsastusloimi',200.00,1,0),('400','Koiran tossut',50.00,2,0);
 /*!40000 ALTER TABLE `TUOTTEET` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -188,4 +165,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-04 14:20:11
+-- Dump completed on 2018-04-16 13:00:50
