@@ -1,4 +1,6 @@
 <?php
+    include "connect.php";
+
     session_start();
     $items = $_SESSION["cart_item"];
     // print("<pre>");
@@ -7,7 +9,28 @@
     $totalPrice = 0;  
     foreach($items as $item) {
         $totalPrice = $totalPrice + $item["hinta"] * $item["maara"];
-    } 
+    }
+
+    // Add client and order info into DB:
+
+    // 1. Add client:
+    $etunimi = $_POST["firstname"];
+    $sukunimi = $_POST["lastname"];
+    $osoite = $_POST["address"];
+    $puhelinnumero = $_POST["phone"];
+    $query = "insert into ASIAKAS (etunimi, sukunimi, osoite, puhelinnumero, asiakasnumero) values ('$etunimi','$sukunimi','$osoite','$puhelinnumero','$asiakasnumero')";
+    mysqli_query($con, $query) or die ("henkilön lisääminen kantaan ei onnistunut");
+
+    // 2. Get client id:
+    $clientId = mysqli_insert_id($con);
+
+    // 3. Add order items:
+    foreach($items as $item) {
+      $productId = $item['TuoteID'];
+      $amount = $item['maara'];
+      $query = "insert into TILAUS (asiakasnumero, TuoteID, kpl) values ('$clientId', '$productId', $amount)";
+      mysqli_query($con, $query) or die("Cannot add order");
+    }
 ?>
 <!DOCTYPE html>
 <html>

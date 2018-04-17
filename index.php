@@ -4,9 +4,9 @@
 	ini_set('display_errors', 1);
 	error_reporting(E_ALL);
 	$db_handle= new DBController();
-	print("<pre>");
-    print_r($_SESSION);
-    print("</pre>");
+	// print("<pre>");
+    // print_r($_SESSION);
+    // print("</pre>");
 	if(!empty($_GET["action"])) {
 		switch($_GET["action"]) {
 			case "add":
@@ -53,75 +53,74 @@
 		}
 	}
 ?>
-
-<HTML>
-<HEAD>
-<TITLE>Verkkokauppa</TITLE>
-<link href="style.css" type="text/css" rel="stylesheet" />
-</HEAD>
-<BODY>
-<div id="shopping-cart">
-<div class="txt-heading">Shopping Cart <a id="btnEmpty" href="index.php?action=empty">Empty Cart</a><a id="checkOut" href="user-form.php">Check Out</a></div>
-<?php
-if(isset($_SESSION["cart_item"])){
-    $item_total = 0;
-?>	
-<table cellpadding="10" cellspacing="1">
-<tbody>
-<tr>
-<th style="text-align:left;"><strong>Tuotteen nimi</strong></th>
-<th style="text-align:left;"><strong>TuoteID</strong></th>
-<th style="text-align:right;"><strong>Maara</strong></th>
-<th style="text-align:right;"><strong>Hinta</strong></th>
-<th style="text-align:center;"><strong>Action</strong></th>
-</tr>	
-<?php		
-    foreach ($_SESSION["cart_item"] as $item){
-		?>
-				<tr>
-				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><strong><?php echo $item["tuotteenNimi"]; ?></strong></td>
-				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><?php echo $item["TuoteID"]; ?></td>
-				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo $item["maara"]; ?></td>
-				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo "$".$item["hinta"]; ?></td>
-				<td style="text-align:center;border-bottom:#F0F0F0 1px solid;"><a href="index.php?action=remove&TuoteID=<?php echo $item["TuoteID"]; ?>" class="btnRemoveAction">Remove Item</a></td>
-				</tr>
-				<?php
-        $item_total += ($item["hinta"]*$item["maara"]);
-		}
-		?>
-
-<tr>
-<td colspan="5" align=right><strong>Total:</strong> <?php echo "$".$item_total; ?></td>
-</tr>
-</tbody>
-</table>		
-  <?php
-}
-?>
-</div>
-
-<div id="product-grid">
-	<div class="txt-heading">Products</div>
-	<?php
-    // here was an extra variable before "SELECT * FROM TUOTTEET"
-	$product_array = $db_handle->runQuery("SELECT * FROM TUOTTEET") or die("Tuotetietoja ei voitu noutaa");
-	if (!empty($product_array)) {
-        foreach($product_array as $key=>$value){
-
-	?>
-		<div class="product-item">
-            <!-- here was name of array instead of $value-->
-			<form method="post" action="index.php?action=add&TuoteID=<?php echo $value["TuoteID"]; ?>">
-			<div><strong><?php echo $value["tuotteenNimi"]; ?></strong></div>
-			<div class="product-price">$<?php echo $value["hinta"]; ?></div>
-			<div><input type="text" name="maara" value="1" size="2" /><input type="submit" value="Add to cart" class="btnAddAction" /></div>
-			</form>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Verkkokauppa</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+		<script src="main.js"></script>
+	</head>
+	<body>
+		<div id="shopping-cart">
+			<div class="txt-heading">Shopping Cart <a id="btnEmpty" href="index.php?action=empty">Empty Cart</a><a id="checkOut" href="user-form.php">Check Out</a></div>
+			<?php
+				if(isset($_SESSION["cart_item"])){
+				$item_total = 0;
+			?>	
+			<table cellpadding="10" cellspacing="1">
+				<tbody>
+					<tr>
+						<th style="text-align:left;"><strong>Tuotteen nimi</strong></th>
+						<th style="text-align:left;"><strong>TuoteID</strong></th>
+						<th style="text-align:right;"><strong>Maara</strong></th>
+						<th style="text-align:right;"><strong>Hinta</strong></th>
+						<th style="text-align:center;"><strong>Action</strong></th>
+					</tr>	
+						<?php		
+							foreach ($_SESSION["cart_item"] as $item){
+						?>
+					<tr>
+						<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><strong><?php echo $item["tuotteenNimi"]; ?></strong></td>
+						<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><?php echo $item["TuoteID"]; ?></td>
+						<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo $item["maara"]; ?></td>
+						<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo "$".$item["hinta"]; ?></td>
+						<td style="text-align:center;border-bottom:#F0F0F0 1px solid;"><a href="index.php?action=remove&TuoteID=<?php echo $item["TuoteID"]; ?>" class="btnRemoveAction">Remove Item</a></td>
+					</tr>
+						<?php
+							$item_total += ($item["hinta"]*$item["maara"]);
+							}
+						?>
+					<tr>
+						<td colspan="5" align=right><strong>Total:</strong> <?php echo "$".$item_total; ?></td>
+					</tr>
+				</tbody>
+			</table>		
+			<?php
+				}
+			?>
 		</div>
-
-	<?php
+		<div id="product-grid">
+			<div class="txt-heading">Products</div>
+			<?php
+			// here was an extra variable before "SELECT * FROM TUOTTEET"
+			$product_array = $db_handle->runQuery("SELECT * FROM TUOTTEET") or die("Tuotetietoja ei voitu noutaa");
+			if (!empty($product_array)) {
+				foreach($product_array as $key=>$value){
+			?>
+				<div class="product-item">
+					<!-- here was name of array instead of $value-->
+					<form method="post" action="index.php?action=add&TuoteID=<?php echo $value["TuoteID"]; ?>">
+					<div><strong><?php echo $value["tuotteenNimi"]; ?></strong></div>
+					<div class="product-price">$<?php echo $value["hinta"]; ?></div>
+					<div><input type="text" name="maara" value="1" size="2" /><input type="submit" value="Add to cart" class="btnAddAction" /></div>
+					</form>
+				</div>
+			<?php
+				}
 			}
-	}
-	?>
-</div>
-</BODY>
-</HTML>
+			?>
+		</div>
+	</body>
+</html>
